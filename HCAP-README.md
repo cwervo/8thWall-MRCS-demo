@@ -1,4 +1,4 @@
-** 8th Wall notes **
+# 8th Wall notes
 
 soccer.hcap is currently being hosted on 8th Wall's CDN. If you want to host your own files, you will need to update the path in index.js line 148 to point to your .hcap file.
 

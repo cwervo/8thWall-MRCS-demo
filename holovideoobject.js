@@ -1,7 +1,7 @@
 class HoloVideoObject {
-    
+
     _createProgram(gl, vertexShaderSource, fragmentShaderSource, preLink) {
-    
+
         function _createShader(gl, source, type) {
             var shader = gl.createShader(type);
             gl.shaderSource(shader, source);
@@ -46,7 +46,7 @@ class HoloVideoObject {
 
         // native json loading technique from @KryptoniteDove:
         // http://codepen.io/KryptoniteDove/post/load-json-file-locally-using-pure-javascript
-    
+
         var xobj = new XMLHttpRequest();
         xobj.overrideMimeType("application/json");
         xobj.open('GET', src, true);
@@ -59,7 +59,7 @@ class HoloVideoObject {
         xobj.send(null);
         return xobj.responseText;
     }
-    
+
     _loadArrayBuffer(url, callback) {
         var xobj = new XMLHttpRequest();
         xobj.name = url.substring(url.lastIndexOf("/") + 1, url.length);
@@ -67,8 +67,8 @@ class HoloVideoObject {
         xobj.open('GET', url, true);
         xobj.onprogress = function(e) {
             if (e.lengthComputable) {
-               var percentComplete = Math.floor((e.loaded / e.total) * 100);
-               this._logInfo(xobj.name + " progress: " + percentComplete);
+                var percentComplete = Math.floor((e.loaded / e.total) * 100);
+                this._logInfo(xobj.name + " progress: " + percentComplete);
             }
         }.bind(this);
         xobj.onreadystatechange = function () {
@@ -93,7 +93,7 @@ class HoloVideoObject {
         xobj.send(null);
         this.httpRequest = xobj;
     }
-    
+
     _startPlaybackIfReady() {
 
         if (this.state == HoloVideoObject.States.Opening) {
@@ -137,7 +137,7 @@ class HoloVideoObject {
 
         var bufferIndex = this.nextBufferLoadIndex;
         this.nextBufferLoadIndex = (this.nextBufferLoadIndex + 1) % (this.json.buffers.length);
-        
+
         if (this.fallbackFrameBuffer && this.nextBufferLoadIndex == 0)
         {
             this.nextBufferLoadIndex = 1;
@@ -182,7 +182,7 @@ class HoloVideoObject {
             buffer.loaded = true;
             this.pendingBufferDownload = false;
             this.needMeshData = false; // is this really true?
-            
+
             this._startPlaybackIfReady();
             this._loadNextBuffer();
 
@@ -205,7 +205,7 @@ class HoloVideoObject {
 
         image.video = video;
         video.preloaded = false;
-                
+
         video.autoplay = false;
         video.muted = this.openOptions.autoplay || !this.openOptions.audioEnabled;
 
@@ -235,7 +235,7 @@ class HoloVideoObject {
                 this.dashPlayer = dashjs.MediaPlayer().create();
                 this.dashPlayer.initialize();
             }
-            
+
             var url = this.urlRoot + imageExt.dashUri;
             this.dashPlayer.attachView(video);
             this.dashPlayer.attachSource(url);
@@ -250,9 +250,9 @@ class HoloVideoObject {
         }
 
         this._logInfo("loading video " + video.mp4Name);
-        
+
         //video.getTime = function() {
-          //  return Math.max((this.timeOffset + this.currentTime) * 1000 - 20, 0);
+        //  return Math.max((this.timeOffset + this.currentTime) * 1000 - 20, 0);
         //};
 
         var hvo = this;
@@ -298,7 +298,7 @@ class HoloVideoObject {
                     this._logInfo("video playing: " + video.mp4Name);
                     video.playing = true;
                 }.bind(this);
-                
+
                 ++this.videosLoaded;
                 this._startPlaybackIfReady();
                 this._loadNextVideo();
@@ -312,13 +312,13 @@ class HoloVideoObject {
                 var playPromise = video.play();
 
                 if (playPromise !== undefined) {
-                        // Automatic playback started!
-                        playPromise.then(_ => {
+                    // Automatic playback started!
+                    playPromise.then(_ => {
                     })
-                    .catch(error => {
-                        // Auto-play was prevented
-                        video.onplaying();
-                    });
+                        .catch(error => {
+                            // Auto-play was prevented
+                            video.onplaying();
+                        });
                 }
             }.bind(this);
 
@@ -332,7 +332,7 @@ class HoloVideoObject {
                     this._logInfo("video playing: " + video.mp4Name);
                     video.playing = true;
                 }.bind(this);
-                
+
                 ++this.videosLoaded;
                 this._startPlaybackIfReady();
                 this._loadNextVideo();
@@ -356,7 +356,7 @@ class HoloVideoObject {
             currentVideo.pause();
             currentVideo.playing = false;
             currentVideo.currentTime = 0.0;
-            
+
             this.state = HoloVideoObject.States.Opening;
 
             this.freeArrayBuffers = [];
@@ -407,10 +407,10 @@ class HoloVideoObject {
                     playPromise.then(_ => {
                         this.state = HoloVideoObject.States.Playing;
                     })
-                    .catch(error => {
-                        // Auto-play was prevented
-                        this._logInfo("play prevented: " + error);
-                    });
+                        .catch(error => {
+                            // Auto-play was prevented
+                            this._logInfo("play prevented: " + error);
+                        });
                 }
             }
         }
@@ -419,7 +419,7 @@ class HoloVideoObject {
             this._logInfo("forceLoad: don't have json yet");
         }
     }
-    
+
     _onVideoEnded(video) {
         this._logInfo("video ended = " + video.mp4Name);
         this.freeVideoElements.push(video.videoElementIndex);
@@ -559,19 +559,19 @@ class HoloVideoObject {
         var saveVb = gl.getParameter(gl.ARRAY_BUFFER_BINDING);
         var saveIb = gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING);
         var saveShader = gl.getParameter(gl.CURRENT_PROGRAM);
-                     
+
         gl.useProgram(this.tfShader);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
-        
+
         var vertexCount = 0;
         var tfShader = this.tfShader;
 
         if (frame.primitives[0].extensions[HoloVideoObject._extName].attributes.POSITION) {
-            
+
             // copy indices
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuf);
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, sourceBuffers.indices, gl.STATIC_DRAW);
-            
+
             // copy uvs
             gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf);
             gl.bufferData(gl.ARRAY_BUFFER, sourceBuffers.compressedUVs, gl.STATIC_DRAW);
@@ -588,7 +588,7 @@ class HoloVideoObject {
             gl.bufferData(gl.ARRAY_BUFFER, sourceBuffers.compressedPos, gl.DYNAMIC_DRAW);
             gl.enableVertexAttribArray(tfShader.inQuantizedLoc);
             gl.vertexAttribPointer(tfShader.inQuantizedLoc, 3, frame.compressedPos.componentType, true, 0, 0);
-            
+
             gl.disableVertexAttribArray(tfShader.prevPosLoc);
             gl.disableVertexAttribArray(tfShader.prevPrevPosLoc);
 
@@ -606,7 +606,7 @@ class HoloVideoObject {
         }
 
         else {
-            
+
             vertexCount = frame.deltas.count;
             frame.indexCount = this.prevMesh.indexCount;
 
@@ -625,9 +625,9 @@ class HoloVideoObject {
 
             gl.uniform3fv(tfShader.decodeMinLoc, frame.deltas.extensions[HoloVideoObject._extName].decodeMin);
             gl.uniform3fv(tfShader.decodeMaxLoc, frame.deltas.extensions[HoloVideoObject._extName].decodeMax);
-            
+
             gl.uniform1i(tfShader.havePrevPosLoc, 1);
-            
+
             gl.bindBuffer(gl.ARRAY_BUFFER, this.prevMesh.outputBuffer);
             gl.enableVertexAttribArray(tfShader.prevPosLoc);
             gl.vertexAttribPointer(tfShader.prevPosLoc, 3, gl.FLOAT, false, 0, 0);
@@ -644,7 +644,7 @@ class HoloVideoObject {
                 gl.vertexAttribPointer(tfShader.prevPrevPosLoc, 3, gl.FLOAT, false, 0, 0);
             }
         }
-         
+
         // ensure output buffer has enough capacity
         var bufferSize = vertexCount * 12;
         gl.bindBuffer(gl.ARRAY_BUFFER, frame.outputBuffer);
@@ -689,7 +689,7 @@ class HoloVideoObject {
                 gl.bufferData(gl.ARRAY_BUFFER, sourceBuffers.compressedNormals, gl.DYNAMIC_DRAW);
                 gl.enableVertexAttribArray(this.octNormalsShader.inOctNormalLoc);
                 gl.vertexAttribPointer(this.octNormalsShader.inOctNormalLoc, 2, gl.UNSIGNED_BYTE, true, 0, 0);
-                
+
                 var bufferSize = vertexCount * 12;
                 gl.bindBuffer(gl.ARRAY_BUFFER, norBuf);
                 gl.bufferData(gl.ARRAY_BUFFER, bufferSize, gl.DYNAMIC_DRAW);
@@ -706,7 +706,7 @@ class HoloVideoObject {
                 gl.bindBuffer(gl.TRANSFORM_FEEDBACK_BUFFER, null);
 
                 gl.bindVertexArray(null);
-                
+
                 //gl.bindBuffer(gl.COPY_READ_BUFFER, norBuf);
                 //gl.bindBuffer(gl.COPY_WRITE_BUFFER, norBuf);
                 //gl.bufferData(gl.COPY_WRITE_BUFFER, bufferSize, gl.DYNAMIC_COPY);
@@ -729,19 +729,19 @@ class HoloVideoObject {
     }   
 
     _updateMesh(posBuf, uvBuf, indexBuf, norBuf) {
-            
+
         this.frameIndex = (this.frameIndex + 1) % this.meshFrames.length;
-    
+
         var frame = this.meshFrames[this.frameIndex];
-    
+
         if (!frame.ensureBuffers()) {
             return false;
         }
-    
+
         if (this.prevPrevMesh) {
             this.prevPrevMesh.uncompressedPos = null;
         }
-        
+
         this.prevPrevMesh = this.prevMesh;
         this.prevMesh = this.curMesh;
         this.curMesh = frame;
@@ -759,7 +759,7 @@ class HoloVideoObject {
 
         var attributes = frame.primitives[0].extensions[HoloVideoObject._extName].attributes;
         var arrayBufferIndex = -1;
-        
+
         if (attributes.POSITION) {
             arrayBufferIndex = buffers[bufferViews[frame.indices.bufferView].buffer].arrayBufferIndex;            
             var indexArrayBuf = this.buffers[arrayBufferIndex];
@@ -797,7 +797,7 @@ class HoloVideoObject {
                 sourceBuffers.compressedNormals = new Uint16Array(norArrayBuf, bufferViews[frame.compressedNormals.bufferView].byteOffset + frame.compressedNormals.byteOffset, frame.compressedNormals.count * 3);
             }
         }
-    
+
         if (this.caps.webgl2 && !this.caps.badTF) {
             return this._updateMeshTF(frame, posBuf, uvBuf, indexBuf, norBuf, sourceBuffers);
         }
@@ -806,7 +806,7 @@ class HoloVideoObject {
 
         var saveVb = gl.getParameter(gl.ARRAY_BUFFER_BINDING);
         var saveIb = gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING);
-    
+
         // keyframe
         if (frame.primitives[0].extensions[HoloVideoObject._extName].attributes.POSITION) {
 
@@ -814,22 +814,22 @@ class HoloVideoObject {
                 this.prevMesh.uncompressedPos = null;
                 this.prevMesh = null;
             }
-            
+
             if (this.prevPrevMesh) {
                 this.prevPrevMesh.uncompressedPos = null;
                 this.prevPrevMesh = null;
             }
-    
+
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuf);
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, sourceBuffers.indices, gl.DYNAMIC_DRAW);
-    
+
             frame.indexCount = frame.indices.count;
-    
+
             {
                 var count = frame.compressedPos.count;
-    
+
                 frame.uncompressedPos = new Float32Array(count * 3); // need to keep these around to decode next frame.
-                
+
                 var min = frame.compressedPos.extensions[HoloVideoObject._extName].decodeMin;
                 var max = frame.compressedPos.extensions[HoloVideoObject._extName].decodeMax;
 
@@ -847,33 +847,33 @@ class HoloVideoObject {
                     frame.uncompressedPos[i1] = sourceBuffers.compressedPos[i1] * bboxdy + min[1];
                     frame.uncompressedPos[i2] = sourceBuffers.compressedPos[i2] * bboxdz + min[2];
                 }
-    
+
                 gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
                 gl.bufferData(gl.ARRAY_BUFFER, frame.uncompressedPos, gl.DYNAMIC_DRAW);
             }
-    
+
             //if (true) {
-                // don't need to un-quantized values we'll tell glVertexAttribPointer to do it
-                gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf);
-                gl.bufferData(gl.ARRAY_BUFFER, sourceBuffers.compressedUVs, gl.DYNAMIC_DRAW);
+            // don't need to un-quantized values we'll tell glVertexAttribPointer to do it
+            gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf);
+            gl.bufferData(gl.ARRAY_BUFFER, sourceBuffers.compressedUVs, gl.DYNAMIC_DRAW);
             //}
         }
-    
+
         else {
-    
+
             var count = frame.deltas.count;
-            
+
             frame.uncompressedPos = new Float32Array(count * 3);
             frame.indexCount = this.prevMesh.indexCount;
-    
+
             var min = frame.deltas.extensions[HoloVideoObject._extName].decodeMin;
             var max = frame.deltas.extensions[HoloVideoObject._extName].decodeMax;
             var bboxdx = (max[0] - min[0]) / 255.0;
             var bboxdy = (max[1] - min[1]) / 255.0;
             var bboxdz = (max[2] - min[2]) / 255.0;
-            
+
             var deltas = sourceBuffers.deltas;
-    
+
             if (this.prevPrevMesh == null) {
                 for (var i = 0; i < count; ++i) {
                     var i0 = 3*i;
@@ -883,16 +883,16 @@ class HoloVideoObject {
                     var x = this.prevMesh.uncompressedPos[i0];
                     var y = this.prevMesh.uncompressedPos[i1];
                     var z = this.prevMesh.uncompressedPos[i2];
-    
+
                     var deltaX = deltas[i0] * bboxdx + min[0];
                     var deltaY = deltas[i1] * bboxdy + min[1];
                     var deltaZ = deltas[i2] * bboxdz + min[2];
-    
+
                     // final
                     x += deltaX;
                     y += deltaY;
                     z += deltaZ;
-    
+
                     frame.uncompressedPos[i0] = x;
                     frame.uncompressedPos[i1] = y;
                     frame.uncompressedPos[i2] = z;
@@ -904,35 +904,35 @@ class HoloVideoObject {
                     var i0 = 3*i;
                     var i1 = i0 + 1;
                     var i2 = i0 + 2;
-    
+
                     var x = this.prevMesh.uncompressedPos[i0];
                     var y = this.prevMesh.uncompressedPos[i1];
                     var z = this.prevMesh.uncompressedPos[i2];
-    
+
                     var dx = x - this.prevPrevMesh.uncompressedPos[i0];
                     var dy = y - this.prevPrevMesh.uncompressedPos[i1];
                     var dz = z - this.prevPrevMesh.uncompressedPos[i2];
-    
+
                     // predicted
                     x += dx;
                     y += dy;
                     z += dz;
-    
+
                     var deltaX = deltas[i0] * bboxdx + min[0];
                     var deltaY = deltas[i1] * bboxdy + min[1];
                     var deltaZ = deltas[i2] * bboxdz + min[2];
-    
+
                     // final
                     x += deltaX;
                     y += deltaY;
                     z += deltaZ;
-    
+
                     frame.uncompressedPos[i0] = x;
                     frame.uncompressedPos[i1] = y;
                     frame.uncompressedPos[i2] = z;
                 }
             }
-            
+
             gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
             gl.bufferData(gl.ARRAY_BUFFER, frame.uncompressedPos, gl.DYNAMIC_DRAW);    
         }
@@ -956,29 +956,29 @@ class HoloVideoObject {
             }
             */
 
-            if (this.fileInfo.octEncodedNormals) {
-                var count = sourceBuffers.compressedNormals.length;
-                var uncompressedNormals = new Float32Array(3 * count);
-                var abs = Math.abs;
-                var clamp = this._clamp;
-                var sqrt = Math.sqrt;
-                for (var i = 0 ; i < count ; ++i) {
-                    var x = sourceBuffers.compressedNormals[2*i];
-                    var y = sourceBuffers.compressedNormals[2*i+1];
-                    x = -1.0 + x * 0.0078125;
-                    y = -1.0 + y * 0.0078125;
-                    var z = 1.0 - abs(x) - abs(y);
-                    var t = clamp(-z, 0.0, 1.0);
-                    x += x >= 0.0 ? -t : t;
-                    y += y >= 0.0 ? -t : t;
-                    var invLen = 1.0 / Math.sqrt(x * x + y * y + z * z);
-                    uncompressedNormals[3*i] = x * invLen;
-                    uncompressedNormals[3*i+1] = y * invLen;
-                    uncompressedNormals[3*i+2] = z * invLen;
+                if (this.fileInfo.octEncodedNormals) {
+                    var count = sourceBuffers.compressedNormals.length;
+                    var uncompressedNormals = new Float32Array(3 * count);
+                    var abs = Math.abs;
+                    var clamp = this._clamp;
+                    var sqrt = Math.sqrt;
+                    for (var i = 0 ; i < count ; ++i) {
+                        var x = sourceBuffers.compressedNormals[2*i];
+                        var y = sourceBuffers.compressedNormals[2*i+1];
+                        x = -1.0 + x * 0.0078125;
+                        y = -1.0 + y * 0.0078125;
+                        var z = 1.0 - abs(x) - abs(y);
+                        var t = clamp(-z, 0.0, 1.0);
+                        x += x >= 0.0 ? -t : t;
+                        y += y >= 0.0 ? -t : t;
+                        var invLen = 1.0 / Math.sqrt(x * x + y * y + z * z);
+                        uncompressedNormals[3*i] = x * invLen;
+                        uncompressedNormals[3*i+1] = y * invLen;
+                        uncompressedNormals[3*i+2] = z * invLen;
+                    }
+                    gl.bindBuffer(gl.ARRAY_BUFFER, norBuf);
+                    gl.bufferData(gl.ARRAY_BUFFER, uncompressedNormals, gl.DYNAMIC_DRAW);
                 }
-                gl.bindBuffer(gl.ARRAY_BUFFER, norBuf);
-                gl.bufferData(gl.ARRAY_BUFFER, uncompressedNormals, gl.DYNAMIC_DRAW);
-            }
 
             else {
                 gl.bindBuffer(gl.ARRAY_BUFFER, norBuf);
@@ -988,7 +988,7 @@ class HoloVideoObject {
 
         gl.bindBuffer(gl.ARRAY_BUFFER, saveVb);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, saveIb);
-    
+
         return true;
     }
 
@@ -997,7 +997,7 @@ class HoloVideoObject {
     }
 
     _onJsonLoaded(response) {
-        
+
         this._logInfo("got json");
 
         var json = this.json = JSON.parse(response);
@@ -1016,7 +1016,7 @@ class HoloVideoObject {
         this.videoElements[0].volume = this.audioVolume;
 
         //for (var i = 0 ; i < Math.min(3, timeline.length) ; ++i) {
-            this.freeVideoElements.push(0);
+        this.freeVideoElements.push(0);
         //}
 
         for (var i = 0 ; i < Math.min(3, this.json.buffers.length - 1) ; ++i) {
@@ -1037,23 +1037,23 @@ class HoloVideoObject {
         var ensureBuffers = function() {
             var bufferViews = json.bufferViews;
             var buffers = json.buffers;
-    
+
             if (this.primitives[0].extensions[HoloVideoObject._extName].attributes.POSITION) {
-    
+
                 var indexBufferView = bufferViews[this.indices.bufferView];
                 if (buffers[indexBufferView.buffer].arrayBufferIndex == undefined ||
                     arrayBuffers[buffers[indexBufferView.buffer].arrayBufferIndex].bufferIndex != indexBufferView.buffer) {
                     hvo._logInfo("buffer for frame " + this.frameIndex + " not downloaded yet: " + buffers[indexBufferView.buffer].uri);
                     return false;
                 }
-    
+
                 var posBufferView = bufferViews[this.compressedPos.bufferView];
                 if (buffers[posBufferView.buffer].arrayBufferIndex == undefined ||
                     arrayBuffers[buffers[posBufferView.buffer].arrayBufferIndex].bufferIndex != posBufferView.buffer) {
                     hvo._logInfo("buffer for frame " + this.frameIndex + " not downloaded yet: " + buffers[posBufferView.buffer].uri);
                     return false;
                 }
-    
+
                 var uvBufferView = bufferViews[this.compressedUVs.bufferView];
                 if (buffers[uvBufferView.buffer].arrayBufferIndex == undefined ||
                     arrayBuffers[buffers[uvBufferView.buffer].arrayBufferIndex].bufferIndex != uvBufferView.buffer) {
@@ -1062,7 +1062,7 @@ class HoloVideoObject {
                 }
             }
             else {
-    
+
                 var deltaBufferView = bufferViews[this.deltas.bufferView];
                 if (buffers[deltaBufferView.buffer].arrayBufferIndex == undefined ||
                     arrayBuffers[buffers[deltaBufferView.buffer].arrayBufferIndex].bufferIndex != deltaBufferView.buffer) {
@@ -1070,7 +1070,7 @@ class HoloVideoObject {
                     return false;
                 }
             }
-    
+
             if (this.compressedNormals) {
                 var norBufferView = bufferViews[this.compressedNormals.bufferView];
                 if (buffers[norBufferView.buffer].arrayBufferIndex == undefined ||
@@ -1079,10 +1079,10 @@ class HoloVideoObject {
                     return false;
                 }
             }
-    
+
             return true;
         }
-        
+
         for (var i = 0; i < numFrames; ++i) {
 
             var meshFrame = this.json.meshes[i];
@@ -1090,18 +1090,18 @@ class HoloVideoObject {
             meshFrame.ensureBuffers = ensureBuffers;
 
             var attributes = meshFrame.primitives[0].extensions[HoloVideoObject._extName].attributes;
-    
+
             if (attributes.POSITION) {
                 // accessor offset is relative to bufferView, not buffer
                 meshFrame.indices = accessors[meshFrame.primitives[0].extensions[HoloVideoObject._extName].indices];
                 meshFrame.compressedUVs = accessors[attributes.TEXCOORD_0];
                 meshFrame.compressedPos = accessors[attributes.POSITION];
             }
-    
+
             else {
                 meshFrame.deltas = accessors[attributes._DELTA];
             }
-    
+
             if (attributes.NORMAL != null) {
                 this.fileInfo.haveNormals = true;
                 meshFrame.compressedNormals = accessors[attributes.NORMAL];
@@ -1134,7 +1134,7 @@ class HoloVideoObject {
         }
 
         if (this.outputBuffers) {
-            
+
             var gl = this.gl;
 
             var saveVb = gl.getParameter(gl.ARRAY_BUFFER_BINDING);
@@ -1203,7 +1203,9 @@ class HoloVideoObject {
         var caps = {};
 
         var version = gl.getParameter(gl.VERSION);
+        alert(`GL version: ${version}`)
         caps.webgl2 = version.indexOf("WebGL 2.") != -1;
+        alert(`caps.webgl2: ${caps.webgl2}`)
         caps.badTF = false;
 
         this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -1251,7 +1253,7 @@ class HoloVideoObject {
         }
 
         var saveTex = gl.getParameter(gl.TEXTURE_BINDING_2D);
-        
+
         for (var i = 0 ; i < (caps.webgl2 ? this.textures.length : 1) ; ++i) {
             this.textures[i] = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, this.textures[i]);
@@ -1265,7 +1267,7 @@ class HoloVideoObject {
 
         this.caps = caps;
     }
-    
+
     getLoadProgress() {
 
         if (this.minBuffers == undefined) {
@@ -1299,24 +1301,24 @@ class HoloVideoObject {
                     var output = "";
                     var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
                     var i = 0;
-                
+
                     while (i < input.length) {
                         chr1 = input[i++];
                         chr2 = i < input.length ? input[i++] : Number.NaN; // Not sure if the index 
                         chr3 = i < input.length ? input[i++] : Number.NaN; // checks are needed here
-                
+
                         enc1 = chr1 >> 2;
                         enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
                         enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
                         enc4 = chr3 & 63;
-                
+
                         if (isNaN(chr2)) {
                             enc3 = enc4 = 64;
                         } else if (isNaN(chr3)) {
                             enc4 = 64;
                         }
                         output += keyStr.charAt(enc1) + keyStr.charAt(enc2) +
-                                  keyStr.charAt(enc3) + keyStr.charAt(enc4);
+                            keyStr.charAt(enc3) + keyStr.charAt(enc4);
                     }
                     return output;
                 }
@@ -1338,7 +1340,7 @@ class HoloVideoObject {
                 !this.filledFallbackFrame &&
                 this.clientBuffers && 
                 this.clientBuffers.posBuf) {
-                
+
                 var gl = this.gl;
 
                 var fallbackPrim = this.json.meshes[0].primitives[0];
@@ -1354,7 +1356,7 @@ class HoloVideoObject {
                 if (this.clientBuffers.norBuf && this.fileInfo.haveNormals) {
                     var norAccesor = this.json.accessors[fallbackPrim.attributes.NORMAL];
                     var norBufferView = this.json.bufferViews[norAccesor.bufferView];
-                
+
                     gl.bindBuffer(gl.ARRAY_BUFFER, this.clientBuffers.norBuf);
                     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.fallbackFrameBuffer, norBufferView.byteOffset + norAccesor.byteOffset, norAccesor.count * 3), gl.STATIC_DRAW);
                 }
@@ -1406,9 +1408,9 @@ class HoloVideoObject {
         var currentVideo = image.video;
 
         if (!this.needMeshData &&
-             currentVideo && 
-             currentVideo.playing && 
-             this.suspended && currentVideo.readyState == 4) {
+            currentVideo && 
+            currentVideo.playing && 
+            this.suspended && currentVideo.readyState == 4) {
             this._logInfo("updateBuffers resuming stalled video");
             currentVideo.play();
             this.suspended = false;
@@ -1433,7 +1435,7 @@ class HoloVideoObject {
             //this._logInfo("video time since last update = " + (videoNow - this.lastVideoTime));
             this.lastVideoTime = videoNow;
             this.lastUpdate = now;
-            
+
             var gl = this.gl;
 
             if (!this.watermarkPixels)
@@ -1470,21 +1472,21 @@ class HoloVideoObject {
                     for (var i = 0 ; i < 16 ; ++i) {
                         if (this.watermarkPixels[blockSize*i+0] > 128 || this.watermarkPixels[blockSize*i+4] > 128) {
                             videoSampleIndex += 1 << i;
-                        }
-                    }
+                                }
+                                }
 
                     //this._logInfo("read pbo " + readPbo + " -> frame index " + videoSampleIndex);
 
                     // At this point we know that frame 'videoSampleIndex' is contained in textures[readPbo], but we don't want to copy it to client texture
                     // until we know we have the matching mesh frame.
-                }
+                    }
 
-                if (!this.pixelBuffers[this.nextPbo])
-                {
-                    this.pixelBuffers[this.nextPbo] = gl.createBuffer();
-                    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, this.pixelBuffers[this.nextPbo]);
-                    gl.bufferData(gl.PIXEL_PACK_BUFFER, this.watermarkPixels.byteLength, gl.DYNAMIC_READ);
-                }
+                    if (!this.pixelBuffers[this.nextPbo])
+                    {
+                        this.pixelBuffers[this.nextPbo] = gl.createBuffer();
+                        gl.bindBuffer(gl.PIXEL_PACK_BUFFER, this.pixelBuffers[this.nextPbo]);
+                        gl.bufferData(gl.PIXEL_PACK_BUFFER, this.watermarkPixels.byteLength, gl.DYNAMIC_READ);
+                    }
 
                 // fill 'nextPbo' texture slice with current contents of video and start an async readback of the watermark pixels
                 //this._logInfo("video -> texture slice " + this.nextPbo);
@@ -1502,94 +1504,94 @@ class HoloVideoObject {
 
                 this.readFences[this.nextPbo] = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
                 this.nextPbo = (this.nextPbo + 1) % this.pixelBuffers.length;
-            }
-
-            else {
-
-                gl.bindTexture(gl.TEXTURE_2D, this.textures[0]);
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, currentVideo);
-
-                gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo1);
-                gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.textures[0], 0);
-                gl.readPixels(0, 0, this.watermarkPixels.byteLength / 4, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.watermarkPixels);
-
-                var blockSize = image.extensions[HoloVideoObject._extName].blockSize * 4;
-                videoSampleIndex = 0;
-                for (var i = 0 ; i < 16 ; ++i) {
-                    if (this.watermarkPixels[blockSize*i+0] > 128 || this.watermarkPixels[blockSize*i+4] > 128) {
-                        videoSampleIndex += 1 << i;
-                    }
-                }
-            }
-
-            if (videoSampleIndex > -1 && (this.curMesh == null || this.curMesh.frameIndex != videoSampleIndex)) {
-            
-                if (this.meshFrames[videoSampleIndex].ensureBuffers()) {
-
-                    if (videoSampleIndex < this.lastVideoSampleIndex) {
-                        this.frameIndex = -1;
-                        this._updateMesh(this.clientBuffers.posBuf, this.clientBuffers.uvBuf, this.clientBuffers.indexBuf, this.clientBuffers.norBuf);
-                        this._logInfo("loop detected, videoSampleIndex = " + videoSampleIndex + ", curMesh.frameIndex = " + this.curMesh.frameIndex);
-                    }
-
-                    while (this.curMesh == null || this.curMesh.frameIndex < videoSampleIndex) {
-                        if (!this._updateMesh(this.clientBuffers.posBuf, this.clientBuffers.uvBuf, this.clientBuffers.indexBuf, this.clientBuffers.norBuf)) {
-                            break;
-                        }
-                    }
-
-                    //this._logInfo("updated to frame index = "+ videoSampleIndex);
-
-                    // Don't update texture unless we were able to update mesh to target frame (the only reason this should ever be possible is if the mesh data isn't downloaded yet)
-                    // Note that we're not stopping the video -> texture -> pbo -> watermark loop from continuing, not sure if this matters?
-                    if (this.curMesh.frameIndex == videoSampleIndex) {
-                        var w = currentVideo.videoWidth;
-                        var h = currentVideo.videoHeight;
-                        if (this.caps.webgl2) {
-                            //if (this.textures[readPbo]) {
-                                gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.fbo1);
-                                gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.textures[readPbo], 0);
-                                gl.readBuffer(gl.COLOR_ATTACHMENT0);
-
-                                gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.fbo2);
-                                gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.clientBuffers.tex, 0);
-                                gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
-
-                                //this._logInfo("texture slice " + readPbo + " -> client texture");
-
-                                var status = gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER);
-                                var status2 = gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER);
-
-                                gl.blitFramebuffer(0, 0, w, h, 0, 0, w, h, gl.COLOR_BUFFER_BIT, gl.NEAREST);
-                            //  }
-                        }
-
-                        else {
-                            gl.bindTexture(gl.TEXTURE_2D, this.clientBuffers.tex);
-                            gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, w, h);
-                        }
-                    }
-                
-                    if (this.curMesh && this.curMesh.frameIndex != videoSampleIndex) {
-                        this._logInfo("texture <-> mesh mismatch");
-                    }
                 }
 
                 else {
-                    this._logInfo("ran out of mesh data, suspending video " + currentVideo.mp4Name);
-                    currentVideo.pause();
-                    this.suspended = true;
-                    this.needMeshData = true;
-                    if (!this.pendingBufferDownload) {
-                        this._loadNextBuffer();
-                    }
-                }
-            }
-            
-            this.lastVideoSampleIndex = videoSampleIndex;
 
-            gl.bindFramebuffer(gl.FRAMEBUFFER, saveFbo);
-            gl.bindTexture(gl.TEXTURE_2D, saveTex);
+                    gl.bindTexture(gl.TEXTURE_2D, this.textures[0]);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, currentVideo);
+
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo1);
+                    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.textures[0], 0);
+                    gl.readPixels(0, 0, this.watermarkPixels.byteLength / 4, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.watermarkPixels);
+
+                    var blockSize = image.extensions[HoloVideoObject._extName].blockSize * 4;
+                    videoSampleIndex = 0;
+                    for (var i = 0 ; i < 16 ; ++i) {
+                        if (this.watermarkPixels[blockSize*i+0] > 128 || this.watermarkPixels[blockSize*i+4] > 128) {
+                            videoSampleIndex += 1 << i;
+                                }
+                                }
+                                }
+
+                                if (videoSampleIndex > -1 && (this.curMesh == null || this.curMesh.frameIndex != videoSampleIndex)) {
+
+                                    if (this.meshFrames[videoSampleIndex].ensureBuffers()) {
+
+                                        if (videoSampleIndex < this.lastVideoSampleIndex) {
+                                            this.frameIndex = -1;
+                                            this._updateMesh(this.clientBuffers.posBuf, this.clientBuffers.uvBuf, this.clientBuffers.indexBuf, this.clientBuffers.norBuf);
+                                            this._logInfo("loop detected, videoSampleIndex = " + videoSampleIndex + ", curMesh.frameIndex = " + this.curMesh.frameIndex);
+                                        }
+
+                                        while (this.curMesh == null || this.curMesh.frameIndex < videoSampleIndex) {
+                                            if (!this._updateMesh(this.clientBuffers.posBuf, this.clientBuffers.uvBuf, this.clientBuffers.indexBuf, this.clientBuffers.norBuf)) {
+                                                break;
+                                            }
+                                        }
+
+                                        //this._logInfo("updated to frame index = "+ videoSampleIndex);
+
+                                        // Don't update texture unless we were able to update mesh to target frame (the only reason this should ever be possible is if the mesh data isn't downloaded yet)
+                                        // Note that we're not stopping the video -> texture -> pbo -> watermark loop from continuing, not sure if this matters?
+                                        if (this.curMesh.frameIndex == videoSampleIndex) {
+                                            var w = currentVideo.videoWidth;
+                                            var h = currentVideo.videoHeight;
+                                            if (this.caps.webgl2) {
+                                                //if (this.textures[readPbo]) {
+                                                gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.fbo1);
+                                                gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.textures[readPbo], 0);
+                                                gl.readBuffer(gl.COLOR_ATTACHMENT0);
+
+                                                gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.fbo2);
+                                                gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.clientBuffers.tex, 0);
+                                                gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+
+                                                //this._logInfo("texture slice " + readPbo + " -> client texture");
+
+                                                var status = gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER);
+                                                var status2 = gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER);
+
+                                                gl.blitFramebuffer(0, 0, w, h, 0, 0, w, h, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+                                                //  }
+                                            }
+
+                                            else {
+                                                gl.bindTexture(gl.TEXTURE_2D, this.clientBuffers.tex);
+                                                gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, w, h);
+                                            }
+                                        }
+
+                                        if (this.curMesh && this.curMesh.frameIndex != videoSampleIndex) {
+                                            this._logInfo("texture <-> mesh mismatch");
+                                        }
+                                    }
+
+                                    else {
+                                        this._logInfo("ran out of mesh data, suspending video " + currentVideo.mp4Name);
+                                        currentVideo.pause();
+                                        this.suspended = true;
+                                        this.needMeshData = true;
+                                        if (!this.pendingBufferDownload) {
+                                            this._loadNextBuffer();
+                                        }
+                                    }
+                                }
+
+                                this.lastVideoSampleIndex = videoSampleIndex;
+
+                                gl.bindFramebuffer(gl.FRAMEBUFFER, saveFbo);
+                                gl.bindTexture(gl.TEXTURE_2D, saveTex);
         }
 
         if (this.curMesh) {
@@ -1642,13 +1644,13 @@ class HoloVideoObject {
         var playPromise = this.videoElements[this.currentVideoIndex].play();
 
         if (playPromise !== undefined) {
-                playPromise.then(_ => {
+            playPromise.then(_ => {
                 this.state = HoloVideoObject.States.Playing;
             })
-            .catch(error => {
-                // Auto-play was prevented
-                this._logInfo("play prevented: " + error);
-            });
+                .catch(error => {
+                    // Auto-play was prevented
+                    this._logInfo("play prevented: " + error);
+                });
         }
     }
 
@@ -1667,7 +1669,7 @@ class HoloVideoObject {
         this.meshFrames = [];
         this.buffersLoaded = 0;
         this.videosLoaded = 0;
-        
+
         // indices into arrays below for next objects we can load data into
         this.freeArrayBuffers = [];
         this.freeVideoElements = [];
@@ -1715,7 +1717,7 @@ class HoloVideoObject {
         }
 
         this.nextPbo = 0;
-        
+
         this.curMesh = null;
         this.prevMesh = null;
         this.prevPrevMesh = null;
@@ -1761,7 +1763,7 @@ if (typeof THREE != "undefined") {
                 else {
 
                     var gl = renderer.getContext();
-            
+
                     var bufferGeometry = new THREE.BufferGeometry();
                     bufferGeometry.boundingSphere = new THREE.Sphere();
                     bufferGeometry.boundingSphere.set(new THREE.Vector3(), Infinity);
@@ -1794,7 +1796,7 @@ if (typeof THREE != "undefined") {
 
                     var material = useNormals ? litMaterial : unlitMaterial;
                     material.map = texture;
-            
+
                     var mesh = new THREE.Mesh(bufferGeometry, material);
                     mesh.scale.x = 0.001;
                     mesh.scale.y = 0.001;
@@ -1811,7 +1813,7 @@ if (typeof THREE != "undefined") {
                     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
                     gl.bindTexture(gl.TEXTURE_2D, saveTex);
-                    
+
                     this.mesh = mesh;
                     this.bufferGeometry = bufferGeometry;
                 }
